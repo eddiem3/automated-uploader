@@ -1,4 +1,4 @@
-#!/usr/bin/python
+5B#!/usr/bin/python
 import ConfigParser
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
@@ -21,14 +21,24 @@ def getCredentials(configFileLocation):
     
 '''
 Uploads Files to a Amazon S3 Bucket
-@param The list of files to upload
 @param Name of bucket to upload files
 @param Credentials for the AWS Account
 '''
 def uploadToBucket(bucketName,credentials):
+    #Connect to bucket
     conn = S3Connection(credentials[0],credentials[1])
-    bucket = conn.get_bucket('tfotl')
-    bucket.list()
+    bucket = conn.get_bucket(bucketName)
+    
+    #Upload File
+    k = Key(bucket)
+    k.key = 'testVideo'
+    k.set_contents_from_filename('video.mp4')
+
+def transcodeVideo():
+    
+    
+    
+    
     
     
 
@@ -38,8 +48,8 @@ def uploadToBucket(bucketName,credentials):
 def main():
     configFileLocation = "/home/xv11/.boto"
     credentials = getCredentials(configFileLocation)
-    bucket = 'tfotl'
-    uploadToBucket(bucket,credentials)
+    bucketName = 'tfotl'
+    uploadToBucket(bucketName,credentials)
 
 
 
