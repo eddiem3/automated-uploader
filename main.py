@@ -57,33 +57,53 @@ def uploadToBucket(bucket,key,fileName):
 Transcodes a video
 @param The name of the video in the bucket
 '''
-def transcodeVideo(key):
+def transcodeVideo(path):
 
-    pipeline = "Standard Sermon"
-    outputName = key + "Trans"
-    
+    pipelineId = "1369250428778-u8cpzw"
+    transInput = {
+        'Key': path,
+        'FrameRate': 'auto',
+        'Resolution': 'auto',
+        'AspectRatio': 'auto',
+        'Interlaced': 'auto',
+        'Container': 'auto'
+        }
+
+    transOutput = {
+        'Key': 'web' +path,
+        'PresetId': '1351620000001-100070',
+        'ThumbnailPattern': "",
+        'Rotate': '0'
+        }
+
+    outputList = [transOutput]
+
 
     transcode = layer1.ElasticTranscoderConnection()
-    transcode.create_job(pipeline, key, outputs = outputName  )
+    transcode.create_job(pipelineId, transInput, transOutput)
     
 def main():
     #Load credentials
-    configFileLocation = "/home/xv11/.boto"
+    configFileLocation = "/home/cygnss/.boto"
     credentials = getCredentials(configFileLocation)
     
     #Connect to aws
     conn = setConnection(credentials)
 
 
+
     #Upload a file to the bucket
     key = "testVideo2"
     fileName = "video.mp4"
     bucketName = "tfotl"
-    bucket = connectToBucket(conn, bucketName)
-    uploadToBucket(bucket,key,fileName)
+    bucket = openBucket(conn, bucketName)
+ #   uploadToBucket(bucket,key,fileName)
+
+    
+    
 
     #Transcode a file
-    
+    transcodeVideo(key)
     
 
 
