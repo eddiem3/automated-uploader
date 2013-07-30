@@ -2,7 +2,7 @@
 import ConfigParser
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
-from boto.elastictranscoder import layer1
+import boto.elastictranscoder 
 
 
 '''
@@ -59,7 +59,7 @@ Transcodes a video
 '''
 def transcodeVideo(path):
 
-    pipelineId = "1369250428778-u8cpzw"
+    pipelineId = '1369250428778-u8cpzw'
     transInput = {
         'Key': path,
         'FrameRate': 'auto',
@@ -76,10 +76,10 @@ def transcodeVideo(path):
         'Rotate': '0'
         }
 
-    outputList = [transOutput]
+    outputList = [transOutput,]
 
 
-    transcode = layer1.ElasticTranscoderConnection()
+    transcode = boto.elastictranscoder.connect_to_region('us-west-2')
     transcode.create_job(pipelineId, transInput, transOutput)
     
 def main():
