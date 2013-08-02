@@ -3,6 +3,8 @@ import ConfigParser
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 import boto.elastictranscoder 
+import urllib2
+import json
 
 
 '''
@@ -59,7 +61,26 @@ Transcodes a video
 '''
 def transcodeVideo(path):
 
-    pipelineId = '1369250428778-u8cpzw'
+    transcode =  boto.elastictranscoder.connect_to_region('us-west-2') #connect to elastic transcoder
+    presetList = transcode.list_presets()
+    
+    presets = {}
+    
+    #Grab the Id and Description of each preset
+    for x in range(3):
+        presetId =  presetList['Presets'][x]['Id']
+
+        description = presetList['Presets'][x]['Description']
+        if description == None:
+            description = "unknown"
+        else:
+#make description string lowercase with no spaces
+            description = ''.join(c.lower() for c in description if not c.isspace())
+        #add the description to the dictionary
+        presets.update({presetId:description}) 
+
+            pipelineId = '1369250428778-u8cpzw'
+    
     transInput = {
         'Key': path,
         'FrameRate': 'auto',
@@ -78,9 +99,44 @@ def transcodeVideo(path):
 
     outputList = [transOutput,]
 
+    #transcode.create_job(pipelineId, transInput, transOutput)
 
-    transcode = boto.elastictranscoder.connect_to_region('us-west-2')
-    transcode.create_job(pipelineId, transInput, transOutput)
+
+        
+        
+
+        
+    
+
+
+
+
+
+
+    #    presetList = json.loads(presetList)
+
+    '''
+    Todo: 
+    Make a preset dictionary
+    For each preset in the presetList
+        grab the ID
+        grab the Name -> remove spaces, convert to lowercase
+        add to preset dictionary {Name:ID}
+
+    For each item in the preset dictionary
+        add make a new transOutput item -> with the key in the form of path +Name
+        append the transOutput item to outputList
+    createjob
+    '''
+
+
+
+
+
+
+
+
+
     
 def main():
     #Load credentials
@@ -93,7 +149,7 @@ def main():
 
 
     #Upload a file to the bucket
-    key = "testVideo2"
+    key = "transcodeTest1"
     fileName = "video.mp4"
     bucketName = "tfotl"
     bucket = openBucket(conn, bucketName)
