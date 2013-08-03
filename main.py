@@ -4,6 +4,7 @@ from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 import boto.elastictranscoder 
 import json
+from pprint import pprint
 
 
 '''
@@ -96,38 +97,39 @@ def transcodeVideo(path):
 
     
     print "Creating job"
+    
+    transInput = {
+        'Key': path,
+        'FrameRate': 'auto',
+        'Resolution': 'auto',
+        'AspectRatio': 'auto',
+        'Interlaced': 'auto',
+        'Container': 'auto'
+        }
+    pprint (transInput)
 
     #Create a job for each desired preset
-    for key, value in presets.iteritems():
+    for pId, descrip in presets.iteritems():
         
-        
-        transInput = {
-            'Key': path,
-            'FrameRate': 'auto',
-            'Resolution': 'auto',
-            'AspectRatio': 'auto',
-            'Interlaced': 'auto',
-            'Container': 'auto'
-            }
-
         transOutput = {
-            'Key': path + value,
-            'PresetId': key,
-            'ThumbnailPattern': 00001,
-            'Rotate': '0'
+            
+            'PresetId': pId,
+            'Rotate': '0',
+            'ThumbnailPattern': "",            
+            'Key': path +"-" + descrip
             }
-
 
         outputs.append(transOutput)
         
-        
-        try:
-            transcode.create_job(pipelineId, transInput, outputs)
-        except Exception, e:
-            print e
 
         
-            
+    pprint (outputs)
+
+    try:
+        transcode.create_job(pipelineId, transInput, outputs=outputs)
+    except Exception, e:
+        print e
+        
 
     
 def main():
