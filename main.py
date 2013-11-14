@@ -6,14 +6,16 @@ import boto.elastictranscoder
 import json
 from pprint import pprint
 
-class AWSConnection(self):
+class AWSTools(self):
 
     '''
     Loads the username and password for amazon aws from a config file
+    And makes an aws connection
     @param Location of the config file
-    @return a tuple in the form (username, password)
+    
     '''
-    def __init__(self, configFileLocation):
+    def __init__(self):
+        configFileLocation = "/home/neumann/.boto"
         config = ConfigParser.ConfigParser()
         config.read (configFileLocation)
 
